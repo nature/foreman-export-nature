@@ -1,14 +1,16 @@
-PATH
-  remote: .
-  specs:
-    foreman-export-nature (0.0.1)
-
-PATH
-  remote: ~/oss/foreman
+GIT
+  remote: git://github.com/clowder/foreman.git
+  revision: dbb103c720123a0a360b5ff9f6d4e73947c4f694
+  branch: plugable_exports
   specs:
     foreman (0.33.0)
       term-ansicolor (~> 1.0.5)
       thor (>= 0.13.6)
+
+PATH
+  remote: .
+  specs:
+    foreman-export-nature (0.0.1)
 
 GEM
   remote: http://rubygems.org/
