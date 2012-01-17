@@ -1,2 +1,2 @@
 #!/bin/sh
-exec chpst -e <%= service_env_path %> <%= process.command %>
+exec chpst -e <%= environment_target %> <%= command %>

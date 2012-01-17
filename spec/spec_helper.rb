@@ -5,3 +5,4 @@ require 'bundler'
 Bundler.require(:test)
 
 require 'foreman-export-nature'
+require 'foreman/engine'
