@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/clowder/foreman.git
-  revision: dbb103c720123a0a360b5ff9f6d4e73947c4f694
+  revision: 209571ec157216ce2859107afc9e1165ae6a2a54
   branch: plugable_exports
   specs:
     foreman (0.33.0)

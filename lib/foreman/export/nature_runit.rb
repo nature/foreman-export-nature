@@ -10,10 +10,10 @@ class Foreman::Export::NatureRunit < Foreman::Export::Base
 
   autoload :Service, 'foreman/export/nature_runit/service'
 
-  def export(location)
+  def export
     error("Must specify a location") unless location
 
-    location = Pathname.new(location)
+    @location = Pathname.new(@location)
 
     engine.procfile.entries.each do |process|
       1.upto(self.concurrency[process.name]) do |num|
