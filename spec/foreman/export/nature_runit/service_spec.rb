@@ -31,40 +31,24 @@ describe Foreman::Export::NatureRunit::Service do
   end
 
   describe "#create!" do
-    it "generates a run script to save to disk" do
-      subject.stub!(:export_environment!)
-
-      subject.should_receive(:export_run_script!)
-      subject.create!
-    end
-
-    it "exports the environmnet vars" do
-      subject.stub!(:write_file)
-
-      subject.should_receive(:export_environment!)
-      subject.create!
-    end
-  end
-
-  describe "#export_run_script!" do
     let(:fake_content) { "blabla" }
 
     it "trys to make the needed directory if its missing" do
       subject.should_receive(:create_if_missing).with(subject.target)
-      subject.export_run_script!
+      subject.create!
     end
 
     it "generates a run script to save to disk" do
       subject.should_receive(:run_script).and_return(fake_content)
       subject.should_receive(:write_file).with(subject.target.join('run'), fake_content)
 
-      subject.export_run_script!
+      subject.create!
     end
 
     it "chmod '0755'" do
       FileUtils.should_receive(:chmod).with(0755, subject.target.join('run').to_s)
 
-      subject.export_run_script!
+      subject.create!
     end
 
   end
@@ -86,40 +70,6 @@ describe Foreman::Export::NatureRunit::Service do
       FileUtils.should_receive(:ln_sf).with(subject.target, subject.active_target)
 
       subject.activate!
-    end
-  end
-
-  describe "export_environment!" do
-    it "trys to make the needed directory if its missing" do
-      subject.should_receive(:create_if_missing).with(subject.environment_target)
-      subject.export_environment!
-    end
-
-    it "writes the env vars as files inside the services target dir" do
-      environment.each do |key,value|
-        subject.should_receive(:write_file).with(subject.environment_target.join(key), value)
-      end
-
-      subject.export_environment!
-    end
-
-    it "cleans the environment_target" do
-      subject.should_receive(:clean_old_environment!)
-      subject.export_environment!
-    end
-  end
-
-  describe "clean_old_environment!" do
-    let(:env_glob)   { "#{subject.environment_target.to_s}/*" }
-    let(:env_foo)    { target.join('env', 'FOO').to_s }
-    let(:env_bar)    { target.join('env', 'BAR').to_s }
-    let(:fake_files) { [env_foo, env_bar] }
-
-    it "clears all the files out of the environment_target" do
-      Dir.should_receive(:[]).with(env_glob).and_return(fake_files)
-      FileUtils.should_receive(:rm).with(fake_files)
-
-      subject.clean_old_environment!
     end
   end
 end

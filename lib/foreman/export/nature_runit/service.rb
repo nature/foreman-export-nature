@@ -16,8 +16,11 @@ class Foreman::Export::NatureRunit::Service
   end
 
   def create!
-    export_run_script!
-    export_environment!
+    run_script_path = target.join('run')
+
+    create_if_missing(target)
+    write_file(run_script_path, run_script)
+    FileUtils.chmod(0755, run_script_path.to_s)
   end
 
   def run_script
@@ -27,28 +30,6 @@ class Foreman::Export::NatureRunit::Service
 
   def activate!
     FileUtils.ln_sf(target, active_target)
-  end
-
-  def export_environment!
-    create_if_missing(environment_target)
-    clean_old_environment!
-
-    environment.each do |key, value|
-      write_file(environment_target.join(key), value)
-    end
-  end
-
-  def export_run_script!
-    run_script_path = target.join('run')
-
-    create_if_missing(target)
-    write_file(run_script_path, run_script)
-    FileUtils.chmod(0755, run_script_path.to_s)
-  end
-
-  def clean_old_environment!
-    glob = environment_target.join('*').to_s
-    FileUtils.rm(Dir[glob])
   end
 
   private
