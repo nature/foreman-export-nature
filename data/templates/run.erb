@@ -7,4 +7,4 @@ export <%= key %>=<%= value%>
 [[ $RVM_VERSION_STRING ]] && rvm use "$RVM_VERSION_STRING"
 
 cd <%= execution_target %>
-exec <%= command %>
+exec <%= command %> 2&>1

@@ -27,31 +27,80 @@ describe Foreman::Export::NatureRunit::Service do
       result.execution_target.should == execution_target
       result.target.should == export_target.join(name)
       result.active_target.should == export_target.join('..', '..', 'service')
+      result.logging_target.should == export_target.join('..', '..', 'var', 'log', name)
       result.environment.should == environment
       result.environment_target.should == result.target.join('env')
       result.command.should == command
     end
   end
 
-  describe "#create!" do
+  describe "create!" do
+    it "calls [#export_run_script!]" do
+      subject.should_receive(:export_run_script!)
+      subject.create!
+    end
+
+    it "calls [#export_log_script!]" do
+      subject.should_receive(:export_log_script!)
+      subject.create!
+    end
+  end
+
+  describe "#export_log_script!" do
+    let(:fake_content) { "blabla" }
+
+    it "does something" do
+      subject.should_receive(:create_if_missing).with(subject.target.join('log'))
+      subject.should_receive(:create_if_missing).with(subject.logging_target)
+      
+      subject.export_log_script!
+    end
+
+    it "generates a log script to save to disk" do
+      subject.should_receive(:log_script).and_return(fake_content)
+      subject.should_receive(:write_file).with(subject.target.join('log', 'run'), fake_content)
+
+      subject.export_log_script!
+    end
+
+    it "chmod '0755'" do
+      FileUtils.should_receive(:chmod).with(0755, subject.target.join('log', 'run').to_s)
+
+      subject.export_log_script!
+    end
+  end
+
+  describe "#log_script" do
+    let(:fake_content) { "blabla" }
+    let(:erb_template_double) { double('erb_template') }
+
+    it "compiles the template with erb" do
+      ERB.should_receive(:new).with(Foreman::Export::NatureRunit::Service.log_template.read).and_return(erb_template_double)
+      erb_template_double.should_receive(:result).and_return(fake_content)
+
+      subject.log_script.should == fake_content
+    end
+  end
+
+  describe "#export_run_script!" do
     let(:fake_content) { "blabla" }
 
     it "trys to make the needed directory if its missing" do
       subject.should_receive(:create_if_missing).with(subject.target)
-      subject.create!
+      subject.export_run_script!
     end
 
     it "generates a run script to save to disk" do
       subject.should_receive(:run_script).and_return(fake_content)
       subject.should_receive(:write_file).with(subject.target.join('run'), fake_content)
 
-      subject.create!
+      subject.export_run_script!
     end
 
     it "chmod '0755'" do
       FileUtils.should_receive(:chmod).with(0755, subject.target.join('run').to_s)
 
-      subject.create!
+      subject.export_run_script!
     end
 
   end
