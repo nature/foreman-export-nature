@@ -26,7 +26,7 @@ class Foreman::Export::NatureRunit::Service
   end
 
   def activate!
-    FileUtils.symlink(target, active_target)
+    FileUtils.ln_sf(target, active_target)
   end
 
   def export_environment!

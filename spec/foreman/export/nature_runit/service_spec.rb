@@ -12,7 +12,7 @@ describe Foreman::Export::NatureRunit::Service do
     subject.stub!(:create_if_missing)
     subject.stub!(:write_file)
     FileUtils.stub!(:chmod)
-    FileUtils.stub!(:symlink)
+    FileUtils.stub!(:ln_sf)
     FileUtils.stub!(:rm)
     Dir.stub!(:[] => [])
   end
@@ -83,7 +83,7 @@ describe Foreman::Export::NatureRunit::Service do
 
   describe "activate!" do
     it "symlinks the service into the 'running' dir" do
-      FileUtils.should_receive(:symlink).with(subject.target, subject.active_target)
+      FileUtils.should_receive(:ln_sf).with(subject.target, subject.active_target)
 
       subject.activate!
     end
