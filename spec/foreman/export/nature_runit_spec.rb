@@ -9,7 +9,7 @@ describe Foreman::Export::NatureRunit do
   end
 
   describe "#export" do
-    subject { Foreman::Export::NatureRunit.new(engine, :app => 'test-application') }
+    subject { Foreman::Export::NatureRunit.new(export_path.to_s, engine, :app => 'test-application') }
 
     let(:service_double) { double('Service') }
 
@@ -28,12 +28,12 @@ describe Foreman::Export::NatureRunit do
         service_double.should_receive(:create!).once
         service_double.should_receive(:activate!).once
 
-        subject.export(export_path.to_s)
+        subject.export
       end
     end
 
     context "with inline concurrency options" do
-      subject { Foreman::Export::NatureRunit.new(engine, :concurrency => 'foo=2', :app => 'test-application') }
+      subject { Foreman::Export::NatureRunit.new(export_path.to_s, engine, :concurrency => 'foo=2', :app => 'test-application') }
 
       let(:procfile) do
 """
@@ -50,7 +50,7 @@ end
         service_double.should_receive(:create!).exactly(3).times
         service_double.should_receive(:activate!).exactly(3).times
 
-        subject.export(export_path.to_s)
+        subject.export
       end
     end
 
