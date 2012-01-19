@@ -14,6 +14,7 @@ class Foreman::Export::NatureRunit < Foreman::Export::Base
     error("Must specify a location") unless location
 
     @location = Pathname.new(@location)
+    execution_target = Pathname.new(engine.directory).expand_path
 
     engine.procfile.entries.each do |process|
       1.upto(self.concurrency[process.name]) do |num|
@@ -21,7 +22,7 @@ class Foreman::Export::NatureRunit < Foreman::Export::Base
         port                  = engine.port_for(process, num, self.port)
         environment_variables = {'PORT' => port}.merge(engine.environment)
 
-        service = Service.new(service_name, process.command, location, environment_variables)
+        service = Service.new(service_name, process.command, execution_target, location, environment_variables)
 
         service.create!
         service.activate!

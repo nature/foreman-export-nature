@@ -5,13 +5,14 @@ class Foreman::Export::NatureRunit::Service
     attr_reader :run_template
   end
 
-  attr_reader :command, :target, :active_target, :environment, :environment_target
+  attr_reader :command, :target, :execution_target, :active_target, :environment, :environment_target
 
-  def initialize(name, command, target, environment)
-    @target             = target.join(name).expand_path
-    @active_target      = target.join('..', '..', 'service', name).expand_path
+  def initialize(name, command, execution_target, export_target, environment)
+    @target             = export_target.join(name).expand_path
+    @active_target      = export_target.join('..', '..', 'service', name).expand_path
     @environment_target = @target.join('env').expand_path
     @environment        = environment
+    @execution_target   = execution_target
     @command            = command
   end
 
