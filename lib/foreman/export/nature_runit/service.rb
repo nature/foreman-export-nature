@@ -31,6 +31,7 @@ class Foreman::Export::NatureRunit::Service
 
   def export_environment!
     create_if_missing(environment_target)
+    clean_old_environment!
 
     environment.each do |key, value|
       write_file(environment_target.join(key), value)
@@ -38,8 +39,16 @@ class Foreman::Export::NatureRunit::Service
   end
 
   def export_run_script!
+    run_script_path = target.join('run')
+
     create_if_missing(target)
-    write_file(target.join('run'), run_script)
+    write_file(run_script_path, run_script)
+    FileUtils.chmod(0755, run_script_path.to_s)
+  end
+
+  def clean_old_environment!
+    glob = environment_target.join('*').to_s
+    FileUtils.rm(Dir[glob])
   end
 
   private

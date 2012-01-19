@@ -11,6 +11,10 @@ describe Foreman::Export::NatureRunit::Service do
   before(:each) do
     subject.stub!(:create_if_missing)
     subject.stub!(:write_file)
+    FileUtils.stub!(:chmod)
+    FileUtils.stub!(:symlink)
+    FileUtils.stub!(:rm)
+    Dir.stub!(:[] => [])
   end
 
   describe ".new" do
@@ -57,6 +61,12 @@ describe Foreman::Export::NatureRunit::Service do
       subject.export_run_script!
     end
 
+    it "chmod '0755'" do
+      FileUtils.should_receive(:chmod).with(0755, subject.target.join('run').to_s)
+
+      subject.export_run_script!
+    end
+
   end
 
   describe "#run_script" do
@@ -93,5 +103,23 @@ describe Foreman::Export::NatureRunit::Service do
       subject.export_environment!
     end
 
+    it "cleans the environment_target" do
+      subject.should_receive(:clean_old_environment!)
+      subject.export_environment!
+    end
+  end
+
+  describe "clean_old_environment!" do
+    let(:env_glob)   { "#{subject.environment_target.to_s}/*" }
+    let(:env_foo)    { target.join('env', 'FOO').to_s }
+    let(:env_bar)    { target.join('env', 'BAR').to_s }
+    let(:fake_files) { [env_foo, env_bar] }
+
+    it "clears all the files out of the environment_target" do
+      Dir.should_receive(:[]).with(env_glob).and_return(fake_files)
+      FileUtils.should_receive(:rm).with(fake_files)
+
+      subject.clean_old_environment!
+    end
   end
 end
