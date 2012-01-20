@@ -1,4 +1,7 @@
 #!/bin/sh
+exec 2>&1
+
+source ~/.bash_profile
 
 <% environment.each do |key, value| %>
 export <%= key %>=<%= value%>
@@ -7,4 +10,4 @@ export <%= key %>=<%= value%>
 [[ $RVM_VERSION_STRING ]] && rvm use "$RVM_VERSION_STRING"
 
 cd <%= execution_target %>
-exec <%= command %> 2&>1
+exec <%= command %>
