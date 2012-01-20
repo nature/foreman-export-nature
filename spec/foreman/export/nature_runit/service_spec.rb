@@ -3,8 +3,8 @@ require 'spec_helper'
 describe Foreman::Export::NatureRunit::Service do
   subject { Foreman::Export::NatureRunit::Service.new(name, command, execution_target, export_target, environment) }
 
-  let(:execution_target) { Pathname.new('~/apps/fake_app').expand_path }
-  let(:export_target)    { Pathname.new('~/etc/sv').expand_path }
+  let(:execution_target) { Pathname.new('~/apps/fake_app') }
+  let(:export_target)    { Pathname.new('~/etc/sv') }
   let(:name)             { "test-service" }
   let(:command)          { "cat foo" }
   let(:environment)      { Hash["FOO" => 'bar', "BAZ" => 'bat'] }
@@ -25,10 +25,10 @@ describe Foreman::Export::NatureRunit::Service do
       result = subject.new(name, command, execution_target, export_target, environment)
 
       result.execution_target.should == execution_target
-      result.target.should == export_target.join(name).expand_path
-      result.active_target.should == export_target.join('..', '..', 'service', name).expand_path
+      result.target.should == export_target.join(name)
+      result.active_target.should == export_target.join('..', '..', 'service')
       result.environment.should == environment
-      result.environment_target.should == result.target.join('env').expand_path
+      result.environment_target.should == result.target.join('env')
       result.command.should == command
     end
   end

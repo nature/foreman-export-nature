@@ -8,9 +8,9 @@ class Foreman::Export::NatureRunit::Service
   attr_reader :command, :target, :execution_target, :active_target, :environment, :environment_target
 
   def initialize(name, command, execution_target, export_target, environment)
-    @target             = export_target.join(name).expand_path
-    @active_target      = export_target.join('..', '..', 'service', name).expand_path
-    @environment_target = @target.join('env').expand_path
+    @target             = export_target.join(name)
+    @active_target      = export_target.join('..', '..', 'service')
+    @environment_target = @target.join('env')
     @environment        = environment
     @execution_target   = execution_target
     @command            = command
