@@ -39,7 +39,7 @@ describe Foreman::Export::NatureRunit do
     end
 
     context "with inline concurrency options" do
-      subject { Foreman::Export::NatureRunit.new(export_path.to_s, engine, :concurrency => 'foo=2', :app => 'test-application') }
+      subject { Foreman::Export::NatureRunit.new(export_path.to_s, engine, :concurrency => 'foo=2,bar=1', :app => 'test-application') }
 
       let(:procfile) do
 """
