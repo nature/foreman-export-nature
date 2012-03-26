@@ -1,7 +1,10 @@
 #!/bin/sh
 exec 2>&1
 
-source ~/.bash_profile
+if [[ -e ~/.bash_profile ]]
+then
+  source ~/.bash_profile
+fi
 
 <% environment.each do |key, value| %>
 export <%= key %>=<%= value%>
