@@ -3,7 +3,8 @@ Gem::Specification.new do |gem|
   gem.version = '0.0.1'
   gem.date    = Date.today.to_s
 
-  gem.add_development_dependency 'foreman', '<= 0.45.0'
+  gem.add_dependency 'foreman', '<= 0.45.0'
+
   gem.add_development_dependency 'rspec',   '~> 2.8.0'
   gem.add_development_dependency 'fuubar'
   gem.add_development_dependency 'ZenTest', '~> 4.4.2'
