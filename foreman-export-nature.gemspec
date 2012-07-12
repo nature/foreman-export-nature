@@ -19,5 +19,7 @@ Gem::Specification.new do |gem|
   gem.has_rdoc = false
   gem.extra_rdoc_files = ['README.md']
 
-  gem.files = Dir['{lib,data}/**/*', 'README.md']
+  gem.files = Dir['{bin,lib,data}/**/*', 'README.md']
+
+  gem.executables = "nature-foreman"
 end
