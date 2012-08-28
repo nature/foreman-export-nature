@@ -35,11 +35,6 @@ describe Foreman::Export::NatureRunit::Service do
   end
 
   describe "create!" do
-    it "calls [#export_run_script!]" do
-      subject.should_receive(:export_run_script!)
-      subject.create!
-    end
-
     it "calls [#export_log_script!]" do
       subject.should_receive(:export_log_script!)
       subject.create!
@@ -52,7 +47,7 @@ describe Foreman::Export::NatureRunit::Service do
     it "does something" do
       subject.should_receive(:create_if_missing).with(subject.target.join('log'))
       subject.should_receive(:create_if_missing).with(subject.logging_target)
-      
+
       subject.export_log_script!
     end
 
@@ -79,41 +74,6 @@ describe Foreman::Export::NatureRunit::Service do
       erb_template_double.should_receive(:result).and_return(fake_content)
 
       subject.log_script.should == fake_content
-    end
-  end
-
-  describe "#export_run_script!" do
-    let(:fake_content) { "blabla" }
-
-    it "trys to make the needed directory if its missing" do
-      subject.should_receive(:create_if_missing).with(subject.target)
-      subject.export_run_script!
-    end
-
-    it "generates a run script to save to disk" do
-      subject.should_receive(:run_script).and_return(fake_content)
-      subject.should_receive(:write_file).with(subject.target.join('run'), fake_content)
-
-      subject.export_run_script!
-    end
-
-    it "chmod '0755'" do
-      FileUtils.should_receive(:chmod).with(0755, subject.target.join('run').to_s)
-
-      subject.export_run_script!
-    end
-
-  end
-
-  describe "#run_script" do
-    let(:fake_content) { "blabla" }
-    let(:erb_template_double) { double('erb_template') }
-
-    it "compiles the template with erb" do
-      ERB.should_receive(:new).with(Foreman::Export::NatureRunit::Service.run_template.read).and_return(erb_template_double)
-      erb_template_double.should_receive(:result).and_return(fake_content)
-
-      subject.run_script.should == fake_content
     end
   end
 

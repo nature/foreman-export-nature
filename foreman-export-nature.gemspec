@@ -8,6 +8,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'rspec',   '~> 2.8.0'
   gem.add_development_dependency 'fuubar'
   gem.add_development_dependency 'ZenTest', '~> 4.4.2'
+  gem.add_development_dependency 'fakefs'
 
   gem.summary = "Nature export scripts for foreman"
   gem.description = "Nature export scripts for foreman"
