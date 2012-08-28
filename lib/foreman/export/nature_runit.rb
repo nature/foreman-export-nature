@@ -9,8 +9,6 @@ class Foreman::Export::NatureRunit < Foreman::Export::Base
     attr_reader :template_root
   end
 
-  autoload :Service, 'foreman/export/nature_runit/service'
-
   def export
     error("Must specify a location") unless location
 
@@ -23,7 +21,7 @@ class Foreman::Export::NatureRunit < Foreman::Export::Base
         port                  = engine.port_for(process, num, self.port)
         environment_variables = {'PORT' => port}.merge(engine.environment)
 
-        service = Service.new(service_name, process.command, execution_target, location, environment_variables)
+        service = Nature::Service.new(service_name, process.command, execution_target, location, environment_variables)
 
         service.create!
         service.activate!

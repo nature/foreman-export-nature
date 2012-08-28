@@ -5,7 +5,7 @@ describe Nature::RunScript do
   include FakeFS::SpecHelpers
 
   it "has appropriate content" do
-    script = Nature::RunScript.new(:name => "web",
+    script = Nature::RunScript.new(:path => "/etc/sv/web/run",
                                    :command => "bundle exec unicorn",
                                    :env => { 'PORT' => '5000', 'PATH' => '"/etc/foo"' },
                                    :cwd => '/foo/bar/app')
@@ -28,14 +28,11 @@ exec bundle exec unicorn
 
 
   it "exports to the appropriate place" do
-    File.should_receive(:chmod).with(0755, File.expand_path('~/etc/sv/web/run'))
-    Nature::RunScript.new(:name => "web",
+    File.should_receive(:chmod).with(0755, File.expand_path('/etc/sv/web/run'))
+    Nature::RunScript.new(:path => "/etc/sv/web/run",
                           :command => "bundle exec unicorn",
                           :env => { 'PORT' => '5000' },
                           :cwd => '/foo/bar/app').export
-    File.file?(File.expand_path('~/etc/sv/web/run')).should be_true
-
-    # Doesn't work in fakefs
-    # File.new(File.expand_path('~/etc/sv/web/run')).stat.mode.should == '755'
+    File.file?(File.expand_path('/etc/sv/web/run')).should be_true
   end
 end

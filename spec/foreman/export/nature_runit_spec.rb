@@ -25,11 +25,11 @@ describe Foreman::Export::NatureRunit do
         engine.should_receive(:port_for).with(kind_of(Foreman::ProcfileEntry), 1, nil).and_return(port)
         engine.should_receive(:environment).and_return(env)
 
-        Foreman::Export::NatureRunit::Service.should_receive(:new).with("test-application-#{ service }-1",
-                                                                        command,
-                                                                        execution_target,
-                                                                        export_path,
-                                                                        {'PORT' => port}.merge(env)).and_return(service_double)
+        Nature::Service.should_receive(:new).with("test-application-#{ service }-1",
+                                                  command,
+                                                  execution_target,
+                                                  export_path,
+                                                  {'PORT' => port}.merge(env)).and_return(service_double)
 
         service_double.should_receive(:create!).once
         service_double.should_receive(:activate!).once
@@ -49,9 +49,9 @@ bar: bundle exec bar
 end
 
       it "exports each instance" do
-        Foreman::Export::NatureRunit::Service.should_receive(:new).with("test-application-foo-1", "bundle exec foo", execution_target, export_path, kind_of(Hash)).and_return(service_double)
-        Foreman::Export::NatureRunit::Service.should_receive(:new).with("test-application-foo-2", "bundle exec foo", execution_target, export_path, kind_of(Hash)).and_return(service_double)
-        Foreman::Export::NatureRunit::Service.should_receive(:new).with("test-application-bar-1", "bundle exec bar", execution_target, export_path, kind_of(Hash)).and_return(service_double)
+        Nature::Service.should_receive(:new).with("test-application-foo-1", "bundle exec foo", execution_target, export_path, kind_of(Hash)).and_return(service_double)
+        Nature::Service.should_receive(:new).with("test-application-foo-2", "bundle exec foo", execution_target, export_path, kind_of(Hash)).and_return(service_double)
+        Nature::Service.should_receive(:new).with("test-application-bar-1", "bundle exec bar", execution_target, export_path, kind_of(Hash)).and_return(service_double)
 
         service_double.should_receive(:create!).exactly(3).times
         service_double.should_receive(:activate!).exactly(3).times

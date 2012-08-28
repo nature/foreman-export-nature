@@ -1,20 +1,18 @@
 require 'shellwords'
 
 module Nature
-  class RunScript
-    @template = Foreman::Export::NatureRunit.template_root.join('run.erb')
+  class LogScript
+    @template = Foreman::Export::NatureRunit.template_root.join('log.erb')
 
     class << self
       attr_reader :template
     end
 
-    attr_reader :path, :command, :env, :cwd
+    attr_reader :path, :log_to
 
     def initialize(args={})
       @path = args.fetch(:path)
-      @command = args.fetch(:command)
-      @env = args.fetch(:env)
-      @cwd = args.fetch(:cwd)
+      @log_to = args.fetch(:log_to)
     end
 
     def content
