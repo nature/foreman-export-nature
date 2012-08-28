@@ -4,7 +4,7 @@ exec 2>&1
 [[ -e ~/.bash_profile ]] && source ~/.bash_profile
 
 <% env.each do |key, value| %>
-export <%= key %>="<%= Shellwords.escape(value) %>"
+export <%= key %>="<%= Shellwords.escape(value.to_s) %>"
 <% end %>
 
 [[ $RVM_VERSION_STRING ]] && rvm use "$RVM_VERSION_STRING"
