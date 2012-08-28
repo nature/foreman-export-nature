@@ -21,7 +21,7 @@ module Nature
     end
 
     def create!
-      Nature::RunScript.new(:path => run_script_path, :command => command, :env => environment, :cwd => execution_target).export
+      Nature::RunScript.new(:path => run_script_path, :command => command, :env => environment, :cwd => cwd).export
       Nature::LogScript.new(:path => log_script_path, :log_to => log_dir).export
     end
 

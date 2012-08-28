@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Nature::Service do
-  subject { Nature::Service }
+  include FakeFS::SpecHelpers
 
   describe ".new" do
     it "sets up the class propery" do
@@ -11,7 +11,7 @@ describe Nature::Service do
       command          = "cat foo"
       environment      = Hash["FOO" => 'bar', "BAZ" => 'bat']
 
-      result = subject.new(name, command, execution_target, export_target, environment)
+      result = Nature::Service.new(name, command, execution_target, export_target, environment)
 
       result.cwd.should == '/apps/fake_app'
       result.environment.should == environment
@@ -26,10 +26,10 @@ describe Nature::Service do
     end
   end
 
-  describe "activate!" do
+  describe "#activate!" do
     it "symlinks the service into the 'running' dir" do
       FileUtils.should_receive(:ln_sf).with('/etc/sv/test-service', '/service')
-      subject.new('test-service', 'ls -lah', Pathname.new('/foo'), Pathname.new('/etc/sv'), {}).activate!
+      Nature::Service.new('test-service', 'ls -lah', Pathname.new('/foo'), Pathname.new('/etc/sv'), {}).activate!
     end
   end
 end

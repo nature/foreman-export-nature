@@ -1,7 +1,6 @@
 require 'spec_helper'
-require 'fakefs/spec_helpers'
 
-describe Nature::RunScript do
+describe Nature::LogScript do
   include FakeFS::SpecHelpers
 
   it "has appropriate content" do
