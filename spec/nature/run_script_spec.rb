@@ -14,8 +14,8 @@ exec 2>&1
 
 [[ -e ~/.bash_profile ]] && source ~/.bash_profile
 
-export PORT=\"5000\"
-export PATH=\"\\\"/etc/foo\\\"\"
+export PORT=5000
+export PATH=\\\"/etc/foo\\\"
 
 [[ $RVM_VERSION_STRING ]] && rvm use \"$RVM_VERSION_STRING\"
 
