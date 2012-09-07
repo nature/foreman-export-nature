@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    foreman-export-nature (0.0.6)
+    foreman-export-nature (0.0.7)
       foreman (<= 0.45.0)
 
 GEM
