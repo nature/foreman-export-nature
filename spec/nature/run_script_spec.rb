@@ -6,7 +6,7 @@ describe Nature::RunScript do
   it "has appropriate content" do
     script = Nature::RunScript.new(:path => "/etc/sv/web/run",
                                    :command => "bundle exec unicorn",
-                                   :env => { 'PORT' => 5000, 'PATH' => '"/etc/foo"' },
+                                   :env => { 'PORT' => 5000, 'PATH' => '/etc/foo', 'JAVA_OPTS' => '-Xmx384m -Xss512k -XX:+UseCompressedOops' },
                                    :cwd => '/foo/bar/app')
 
     script.content.should == """#!/bin/sh
@@ -14,8 +14,9 @@ exec 2>&1
 
 [[ -e ~/.bash_profile ]] && source ~/.bash_profile
 
-export PORT=5000
-export PATH=\\\"/etc/foo\\\"
+export PORT=\"5000\"
+export PATH=\"/etc/foo\"
+export JAVA_OPTS=\"-Xmx384m -Xss512k -XX:+UseCompressedOops\"
 
 [[ $RVM_VERSION_STRING ]] && rvm use \"$RVM_VERSION_STRING\"
 
