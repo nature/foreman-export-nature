@@ -7,17 +7,19 @@ module Nature
     attr_reader :command, :environment, :cwd, :target, :active_target, :run_script_path, :log_script_path,
       :log_dir
 
-    def initialize(name, command, cwd, export_target, environment)
-      @command     = command
-      @environment = environment
-      @cwd         = cwd.to_s
+    def initialize(name, opts={})
+      @command     = opts.fetch(:command)
+      @environment = opts.fetch(:environment)
+      @cwd         = opts.fetch(:cwd).to_s
 
-      @target        = export_target.join(name).to_s
-      @active_target = export_target.join('..', '..', 'service').to_s
+      export_to      = opts.fetch(:export_to)
 
-      @run_script_path = export_target.join(name, 'run').to_s
-      @log_script_path = export_target.join(name, 'log/run').to_s
-      @log_dir         = export_target.join('../../var/log', name).to_s
+      @target        = export_to.join(name).to_s
+      @active_target = export_to.join('..', '..', 'service').to_s
+
+      @run_script_path = export_to.join(name, 'run').to_s
+      @log_script_path = export_to.join(name, 'log/run').to_s
+      @log_dir         = export_to.join('../../var/log', name).to_s
     end
 
     def create!

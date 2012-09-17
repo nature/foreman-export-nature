@@ -16,7 +16,10 @@ describe Nature::Service do
       command          = "cat foo"
       environment      = Hash["FOO" => 'bar', "BAZ" => 'bat']
 
-      result = Nature::Service.new(name, command, execution_target, export_target, environment)
+      result = Nature::Service.new(name, :command => command,
+                                         :cwd => execution_target,
+                                         :export_to => export_target,
+                                         :environment => environment)
 
       result.cwd.should == '/apps/fake_app'
       result.environment.should == environment
@@ -32,7 +35,10 @@ describe Nature::Service do
   end
 
   it "creates the necessary files and folders" do
-    service = Nature::Service.new('test-service', 'ls -lah', Pathname.new('/service'), Pathname.new('/etc/sv'), {})
+    service = Nature::Service.new('test-service', :command => 'ls -lah',
+                                                  :cwd => Pathname.new('/tmp/app'),
+                                                  :export_to => Pathname.new('/etc/sv'),
+                                                  :environment => {})
     service.create!
 
     File.exists?(service.run_script_path).should be_true
@@ -42,6 +48,9 @@ describe Nature::Service do
 
   it "can symlink the service to make it active" do
     FileUtils.should_receive(:ln_sf).with('/etc/sv/test-service', '/service')
-    Nature::Service.new('test-service', 'ls -lah', Pathname.new('/foo'), Pathname.new('/etc/sv'), {}).activate!
+    Nature::Service.new('test-service', :command => 'ls -lah',
+                                        :cwd => Pathname.new('/tmp/app'),
+                                        :export_to => Pathname.new('/etc/sv'),
+                                        :environment => {}).activate!
   end
 end

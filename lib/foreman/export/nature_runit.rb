@@ -21,7 +21,10 @@ class Foreman::Export::NatureRunit < Foreman::Export::Base
         port      = engine.port_for(process, num)
         env       = engine.env.merge("PORT" => port)
 
-        service = Nature::Service.new(full_name, process.command, cwd, export_to, env)
+        service = Nature::Service.new(full_name, :command => process.command,
+                                                 :cwd => cwd,
+                                                 :export_to => export_to,
+                                                 :environment => env)
         service.create!
         service.activate!
       end
