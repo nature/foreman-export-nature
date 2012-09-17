@@ -4,22 +4,21 @@ module Nature
       attr_reader :run_template, :log_template
     end
 
-    attr_reader :command, :environment, :cwd, :target, :active_target, :run_script_path, :log_script_path,
-      :log_dir
+    attr_reader :command, :environment, :cwd, :path, :active_path, :run_script_path,
+      :log_script_path, :log_dir
 
-    def initialize(name, opts={})
+    def initialize(path, opts={})
       @command     = opts.fetch(:command)
       @environment = opts.fetch(:environment)
       @cwd         = opts.fetch(:cwd).to_s
 
-      export_to      = opts.fetch(:export_to)
 
-      @target        = export_to.join(name).to_s
-      @active_target = export_to.join('..', '..', 'service').to_s
+      @path        = path.to_s
+      @active_path = path.join('../../../service').to_s
 
-      @run_script_path = export_to.join(name, 'run').to_s
-      @log_script_path = export_to.join(name, 'log/run').to_s
-      @log_dir         = export_to.join('../../var/log', name).to_s
+      @run_script_path = path.join('run').to_s
+      @log_script_path = path.join('log/run').to_s
+      @log_dir         = path.join('../../../var/log', path.basename).to_s
     end
 
     def create!
@@ -30,7 +29,7 @@ module Nature
     end
 
     def activate!
-      FileUtils.ln_sf(target, active_target)
+      FileUtils.ln_sf(path, active_path)
     end
   end
 end

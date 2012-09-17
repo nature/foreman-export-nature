@@ -10,23 +10,21 @@ describe Nature::Service do
 
   describe ".new" do
     it "sets up the class propery" do
-      execution_target = Pathname.new('/apps/fake_app')
-      export_target    = Pathname.new('/etc/sv')
-      name             =  "test-service"
-      command          = "cat foo"
-      environment      = Hash["FOO" => 'bar', "BAZ" => 'bat']
+      path        = Pathname.new('/etc/sv/test-service')
+      cwd         = Pathname.new('/apps/fake_app')
+      command     = "cat foo"
+      environment = Hash["FOO" => 'bar', "BAZ" => 'bat']
 
-      result = Nature::Service.new(name, :command => command,
-                                         :cwd => execution_target,
-                                         :export_to => export_target,
+      result = Nature::Service.new(path, :command => command,
+                                         :cwd => cwd,
                                          :environment => environment)
 
       result.cwd.should == '/apps/fake_app'
       result.environment.should == environment
       result.command.should == command
 
-      result.target.should == '/etc/sv/test-service'
-      result.active_target.should == '/service'
+      result.path.should == '/etc/sv/test-service'
+      result.active_path.should == '/service'
 
       result.run_script_path.should == '/etc/sv/test-service/run'
       result.log_script_path.should == '/etc/sv/test-service/log/run'
@@ -35,10 +33,9 @@ describe Nature::Service do
   end
 
   it "creates the necessary files and folders" do
-    service = Nature::Service.new('test-service', :command => 'ls -lah',
-                                                  :cwd => Pathname.new('/tmp/app'),
-                                                  :export_to => Pathname.new('/etc/sv'),
-                                                  :environment => {})
+    service = Nature::Service.new(Pathname.new('/etc/sv/test-service'), :command => 'ls -lah',
+                                                                        :cwd => Pathname.new('/tmp/app'),
+                                                                        :environment => {})
     service.create!
 
     File.exists?(service.run_script_path).should be_true
@@ -48,9 +45,8 @@ describe Nature::Service do
 
   it "can symlink the service to make it active" do
     FileUtils.should_receive(:ln_sf).with('/etc/sv/test-service', '/service')
-    Nature::Service.new('test-service', :command => 'ls -lah',
-                                        :cwd => Pathname.new('/tmp/app'),
-                                        :export_to => Pathname.new('/etc/sv'),
-                                        :environment => {}).activate!
+    Nature::Service.new(Pathname.new('/etc/sv/test-service'), :command => 'ls -lah',
+                                                              :cwd => Pathname.new('/tmp/app'),
+                                                              :environment => {}).activate!
   end
 end

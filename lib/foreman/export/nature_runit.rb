@@ -17,14 +17,13 @@ class Foreman::Export::NatureRunit < Foreman::Export::Base
 
     engine.each_process do |name, process|
       1.upto(engine.formation[name]) do |num|
-        full_name = "#{app}-#{name}-#{num}"
-        port      = engine.port_for(process, num)
-        env       = engine.env.merge("PORT" => port)
+        path = export_to.join("#{app}-#{name}-#{num}")
+        port = engine.port_for(process, num)
+        env  = engine.env.merge("PORT" => port)
 
-        service = Nature::Service.new(full_name, :command => process.command,
-                                                 :cwd => cwd,
-                                                 :export_to => export_to,
-                                                 :environment => env)
+        service = Nature::Service.new(path, :command => process.command,
+                                            :cwd => cwd,
+                                            :environment => env)
         service.create!
         service.activate!
       end
