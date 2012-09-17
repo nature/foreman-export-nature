@@ -1,64 +1,27 @@
 require 'spec_helper'
 
 describe Foreman::Export::NatureRunit do
-  let(:engine)           { Foreman::Engine.new("/Procfile") }
-  let(:execution_target) { Pathname.new(engine.directory) }
-  let(:export_path)      { Pathname.new('~/etc/sv') }
+  include FakeFS::SpecHelpers
 
   before(:each) do
-    File.stub!(:read => procfile)
+    # Bug in FakeFS, we dont need to worry about it here
+    File.stub(:chmod)
   end
 
-  describe "#export" do
-    subject { Foreman::Export::NatureRunit.new(export_path.to_s, engine, :app => 'test-application') }
+  let(:engine)   { Foreman::Engine.new(:formation => "web=2,background=1").load_procfile(procfile) }
+  let(:options)  { Hash.new }
+  let(:procfile) { write_procfile("/tmp/app/Procfile", <<-EOP)
+web: bundle exec thin --port $PORT
+background: bundle exec sidekiq
+EOP
+}
 
-    let(:service_double) { double('Service') }
+  it "intergrates with foreman to export all the peices to the filesystem" do
+    Foreman::Export::NatureRunit.new('/etc/sv', engine, options).export
 
-    context "a single process" do
-      let(:service)  { "foo" }
-      let(:command)  { "bundle exec #{ service }" }
-      let(:procfile) { "#{ service }: #{ command }" }
-      let(:port)     { 5000 }
-      let(:env)      { Hash['SERVER_PORT' => 6000]}
-
-      it "exports the process with its options" do
-        engine.should_receive(:port_for).with(kind_of(Foreman::ProcfileEntry), 1, nil).and_return(port)
-        engine.should_receive(:environment).and_return(env)
-
-        Nature::Service.should_receive(:new).with("test-application-#{ service }-1",
-                                                  command,
-                                                  execution_target,
-                                                  export_path,
-                                                  {'PORT' => port}.merge(env)).and_return(service_double)
-
-        service_double.should_receive(:create!).once
-        service_double.should_receive(:activate!).once
-
-        subject.export
-      end
-    end
-
-    context "with inline concurrency options" do
-      subject { Foreman::Export::NatureRunit.new(export_path.to_s, engine, :concurrency => 'foo=2,bar=1', :app => 'test-application') }
-
-      let(:procfile) do
-"""
-foo: bundle exec foo
-bar: bundle exec bar
-"""
-end
-
-      it "exports each instance" do
-        Nature::Service.should_receive(:new).with("test-application-foo-1", "bundle exec foo", execution_target, export_path, kind_of(Hash)).and_return(service_double)
-        Nature::Service.should_receive(:new).with("test-application-foo-2", "bundle exec foo", execution_target, export_path, kind_of(Hash)).and_return(service_double)
-        Nature::Service.should_receive(:new).with("test-application-bar-1", "bundle exec bar", execution_target, export_path, kind_of(Hash)).and_return(service_double)
-
-        service_double.should_receive(:create!).exactly(3).times
-        service_double.should_receive(:activate!).exactly(3).times
-
-        subject.export
-      end
-    end
-
+    # Simple sanity check, don't duplicate the work of the unit tests
+    File.file?('/etc/sv/app-web-1/run').should be_true
+    File.file?('/etc/sv/app-web-2/run').should be_true
+    File.file?('/etc/sv/app-background-1/run').should be_true
   end
 end
