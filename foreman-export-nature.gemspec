@@ -1,6 +1,6 @@
 Gem::Specification.new do |gem|
   gem.name    = 'foreman-export-nature'
-  gem.version = '0.0.7'
+  gem.version = '0.0.8'
   gem.date    = Date.today.to_s
 
   gem.add_dependency 'foreman', '>= 0.59.0'
