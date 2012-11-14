@@ -44,6 +44,7 @@ describe Nature::Service do
   end
 
   it "can symlink the service to make it active" do
+    FileUtils.should_receive(:mkdir_p).with('/service')
     FileUtils.should_receive(:ln_sf).with('/etc/sv/test-service', '/service')
     Nature::Service.new(Pathname.new('/etc/sv/test-service'), :command => 'ls -lah',
                                                               :cwd => Pathname.new('/tmp/app'),

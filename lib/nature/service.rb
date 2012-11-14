@@ -29,6 +29,7 @@ module Nature
     end
 
     def activate!
+      FileUtils.mkdir_p(active_path)
       FileUtils.ln_sf(path, active_path)
     end
   end
