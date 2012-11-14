@@ -1,14 +1,8 @@
 require 'pathname'
 require 'foreman/export'
-require 'foreman/cli'
+require 'nature'
 
 class Foreman::Export::NatureRunit < Foreman::Export::Base
-  @template_root = Pathname.new(File.dirname(__FILE__)).join('../../../data/templates')
-
-  class << self
-    attr_reader :template_root
-  end
-
   def export
     error("Must specify a location") unless location
 

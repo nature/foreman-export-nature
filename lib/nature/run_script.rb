@@ -2,7 +2,7 @@ require 'shellwords'
 
 module Nature
   class RunScript
-    @template = Foreman::Export::NatureRunit.template_root.join('run.erb')
+    @template = Nature.template_root.join('run.erb')
 
     class << self
       attr_reader :template

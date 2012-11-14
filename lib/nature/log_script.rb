@@ -2,7 +2,7 @@ require 'shellwords'
 
 module Nature
   class LogScript
-    @template = Foreman::Export::NatureRunit.template_root.join('log.erb')
+    @template = Nature.template_root.join('log.erb')
 
     class << self
       attr_reader :template
